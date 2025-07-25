@@ -1,0 +1,17 @@
+<script setup lang="ts">
+import LoginForm from '../components/organisms/forms/LoginForm.vue';
+import Title from '../components/atoms/Title.vue';
+import { useAuthStore } from '../store/auth';
+
+const auth = useAuthStore();
+
+auth.logout()
+</script>
+
+<template>
+        <Title class="text-center">Filmes</Title>
+        <LoginForm></LoginForm>
+</template>
+
+<style scoped>
+</style>

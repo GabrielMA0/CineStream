@@ -1,0 +1,31 @@
+<script setup lang="ts">
+import Title from '../components/atoms/Title.vue';
+import Button from '../components/atoms/Button.vue';
+import TableRental from '../components/organisms/tables/TableRental.vue';
+import FilterInput from '../components/atoms/inputs/FilterInput.vue';
+</script>
+
+<template>
+  <div class="flex justify-between w-full">
+    <Title>Locações</Title>
+
+    <div class="flex gap-4">
+      <FilterInput placeHolder="Nome, CPF"></FilterInput>
+      <FilterInput :isSelectField="false" placeHolder="Status"></FilterInput>
+      <select v-if="isSelectField" v-for="value in optionsValue" name="select" class="outline-none border-none p-[16px] w-full bg-[#242647] text-[#E2E8F0] rounded-[8px] max-w-[448px] ">
+    <option selected>Todos</option>
+    <option :value="value">{{value}}</option>
+  </select>
+
+    </div>
+    
+  </div>
+  
+  <TableRental></TableRental>
+
+  <Button>Nova Locação</Button>
+
+</template>
+
+<style scoped>
+</style>
