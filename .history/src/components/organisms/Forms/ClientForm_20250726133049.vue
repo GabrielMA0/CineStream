@@ -23,7 +23,7 @@ const route = useRoute();
 const id = route.params.id as string;
 const client = useClientsStore();
 
-const clientEdit = getDataById(client.clients, id) || '';
+const clientEdit = getDataById(client.clients, id) || ({} as Clients);
 
 const schema = yup.object({
   name: yup.string().required('Campo obrigatório'),

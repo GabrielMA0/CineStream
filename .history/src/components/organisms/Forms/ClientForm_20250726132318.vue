@@ -23,7 +23,7 @@ const route = useRoute();
 const id = route.params.id as string;
 const client = useClientsStore();
 
-const clientEdit = getDataById(client.clients, id) || '';
+const clientEdit = getDataById(client.clients, id) || ({} as Clients);
 
 const schema = yup.object({
   name: yup.string().required('Campo obrigatório'),
@@ -261,9 +261,9 @@ const changeClientStatus = (): void => {
             />
         </ContainerInputs>
           <div class="flex gap-5 flex-wrap justify-center w-full md:w-auto">
-            <Button v-if="clientEdit" typeBtn="button" @click="updateRegistration">Salvar</Button>
+            <Button v-if="clientEdit.length" typeBtn="button" @click="updateRegistration">Salvar</Button>
             <Button v-else typeBtn="submit">Cadastrar</Button>
-            <Button v-show="clientEdit" typeBtn="button" @click="changeClientStatus">Ativar/Desativar</Button>
+            <Button v-show="clientEdit.length" typeBtn="button" @click="changeClientStatus">Ativar/Desativar</Button>
         </div>
         
     </form>
