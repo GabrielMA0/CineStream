@@ -28,7 +28,7 @@ defineProps({
       <tr class="h-[72px]" v-for="client in clients" :key="client.id">
         <Td>{{ client.id }}</Td>
         <Td class="capitalize">{{ client.name }}</Td>
-        <Td class="hidden md:table-cell capitalize">{{ client.lastName }}</Td>
+        <Td class="hidden md:table-cell">{{ client.lastName }}</Td>
         <Td class="hidden md:table-cell">{{ client.document }}</Td>
         <Td class="hidden md:table-cell">{{ client.email }}</Td>
         <Td class="hidden md:table-cell">{{ client.cellPhone }}</Td>
