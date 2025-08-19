@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import type { User } from '../types/general';
 import type { Rental } from '../types/general';
 
 export const useRentalsStore = defineStore('rentals', {
@@ -6,7 +7,7 @@ export const useRentalsStore = defineStore('rentals', {
         rentals: [],
     }),
     actions: {
-        addRental(rental: Rental): void {
+        addRental(rental: User): void {
             this.rentals.push(rental)
         },
         toggleRentalStatus(id: string): void {

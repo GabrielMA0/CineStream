@@ -4,7 +4,7 @@ export const filterClient = (filterText: string, data: any, dataStore: any) => {
         return;
     }
 
-    console.log(dataStore);
+    console.log(dataStore)
 
     data.value = dataStore.filter(
         (client: any) => client.name.toLowerCase().includes(filterText) || client?.lastName.toLowerCase().includes(filterText) || client?.document.toLowerCase().includes(filterText)

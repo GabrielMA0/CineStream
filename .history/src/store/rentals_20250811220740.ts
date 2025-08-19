@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import type { User } from '../types/general';
 import type { Rental } from '../types/general';
 
 export const useRentalsStore = defineStore('rentals', {

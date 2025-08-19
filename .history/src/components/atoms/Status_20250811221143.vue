@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type {Status, StatusRental} from "../../types/general"
+import {Status, StatusRental} from "../../types/general"
 defineProps<{
-  statusType: Status | StatusRental;
+  statusType: "ativo" | "inativo" ;
 }>();
 </script>
 
