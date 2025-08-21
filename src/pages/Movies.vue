@@ -12,10 +12,10 @@ import { ref } from 'vue';
 const router = useRouter()
 const movieStore = useMovieStore();
 const movies = ref([]);
-const fieldMovie = ref('');
-const fieldYear = ref('');
+const fieldMovie = ref<string>('');
+const fieldYear = ref<number>(0);
 
-const searchMovies = async () => {
+const searchMovies = async (): Promise<void> => {
 
     const result = await fetchMovies(fieldMovie.value, fieldYear.value);
 

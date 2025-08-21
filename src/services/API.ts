@@ -1,7 +1,7 @@
 const apiKey: string = '7b48c66c'
 const api: string = `http://www.omdbapi.com/?apikey=${apiKey}&type=movie`
 
-export const fetchMovies = async (text: string, year: number) => {
+export const fetchMovies = async (text: string, year?: number) => {
     try {
         const response = await fetch(`${api}&s=${text}&y=${year}`)
         const json = await response.json()

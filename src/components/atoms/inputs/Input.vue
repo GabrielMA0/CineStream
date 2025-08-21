@@ -7,7 +7,7 @@ const props = withDefaults(defineProps<{
   name?: string,
   typeField?: string,
   styleField?: 'filter' | 'register' | 'date',
-  modelValue?: string,
+  modelValue?: string | number,
   readonly?: boolean,
   maxlength?: number | string,
 }>(), {

@@ -2,18 +2,23 @@
 import Button from '../../atoms/Button.vue';
 import Alert from '../../atoms/Alert.vue';
 import InputField from '../../molecules/InputField.vue';
+import CustomSelectModal from '../../molecules/CustomSelectModal.vue';
 import { useMovieStore } from '../../../store/movie';
 import ContainerInputs from '../../molecules/ContainerInputs.vue';
 import { useClientsStore } from '../../../store/clients';
 import {useAuthStore} from '../../../store/auth'
 import {useRentalsStore} from '../../../store/rentals'
 import {formatDate} from '../../../utils/date'
+import {fetchMovies} from '../../../services/API'
+
+import type {Rental, Clients, Movie} from '../../../types/general'
 
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { v4 as uuidv4 } from 'uuid';
+import { storeToRefs } from 'pinia'
 
 const movieStore = useMovieStore();
 const clientStore = useClientsStore();
@@ -21,7 +26,30 @@ const authStore = useAuthStore()
 const rentalStore = useRentalsStore()
 const router = useRouter()
 
-const movies = movieStore.movies;
+const showAlert = ref<boolean>(false);
+const typeAlert= ref<string>('sucess');
+const inputClient = ref<string>('');
+const inputMovies= ref<string>('');
+const messageAlert = ref<string>('Filme alugado com sucesso!');
+const filterClient = ref<Clients[]>(clientStore.clients.filter(client => client.status === 'ativo'));
+const selectedClient = ref<Clients>({
+   id: "",
+    name: "",
+    lastName: "",
+    document: "",
+    email: "",
+    cellPhone: "",
+    zipCode: "",
+    street: "",
+    neighborhood: "",
+    city: "",
+    state: "",
+    status: "ativo"
+});
+const searchedMovies = ref<Movie[]>([])
+const showModalClients = ref<boolean>(false);
+const showModalMovies = ref<boolean>(false);
+const {movie} = storeToRefs(movieStore);
 
 const schema = yup.object({
   client: yup.string().required('Campo obrigatório'),
@@ -40,29 +68,22 @@ const schema = yup.object({
     }),
 });
 
+
 const { handleSubmit, setFieldValue } = useForm({
   validationSchema: schema,
   initialValues: {
     client: '',
-    movie: movies.Title || '',
+    movie: movie.value?.Title || '',
     date: ''
   }
 });
 
-const showAlert = ref(false);
-const typeAlert = ref('sucess');
-const inputClient = ref('');
-const messageAlert = ref('Filme alugado com sucesso!');
-const filterClient = ref(clientStore.clients.filter(client => client.status === 'ativo'));
-const selectedClient = ref({});
-const showModal = ref(false);
 
 const canRent = (rentals: Rental[], clientId: string): boolean => {
       return !rentals.some(
         (rental) => rental.id === clientId && rental.status === 'alugado'
       );
     };
-
 
 const onSubmit = handleSubmit(values => {
 
@@ -86,7 +107,7 @@ const onSubmit = handleSubmit(values => {
 
     const idRental = uuidv4()
 
-    const payload = {
+    const payload: Rental = {
       idRental,
       id: selectedClient.value.id,
       name: values.client,
@@ -109,21 +130,35 @@ const onSubmit = handleSubmit(values => {
         }, 3000); 
 });
 
-const searchClient = (): void => {
-  filterClient.value = clientStore.clients;
+const searchClient = (value: string): void => {
+  filterClient.value = [...clientStore.clients]
 
   filterClient.value = clientStore.clients.filter(
     client => 
-      client.name.toLowerCase().includes(inputClient.value) ||
-      client.document.toLowerCase().includes(inputClient.value)
+      client.name.toLowerCase().includes(value) ||
+      client.document.toLowerCase().includes(value)
   );
 }
 
-const selectClient = (client: any): void => {
-  showModal.value = false;
-  selectedClient.value = client;
-  setFieldValue('client', client.name)
-  inputClient.value = ''
+const searchMovie = async (value: string): Promise<void> => {
+
+  const result = await fetchMovies(value);
+
+  searchedMovies.value = result.Search || [];
+}
+
+const selectClient = (item: Clients): void => {
+  selectedClient.value = item;
+    showModalClients.value = false;
+    setFieldValue('client', `${item.name} ${item.lastName}`)
+}
+
+const selectMovie = (item: Movie) => {
+  movieStore.addMovie(item);
+  showModalMovies.value = false;
+  setFieldValue('movie', item.Title ?? '')
+
+  console.log(movie);
 }
 
 </script>
@@ -138,35 +173,27 @@ const selectClient = (client: any): void => {
             :isRequired=true
             typeField="text"
             name="client"
-            @click="showModal = !showModal;"
+            @click="showModalClients = !showModalClients;"
             readonly
             :modelValue="selectedClient.name || ''"
             />
 
-            <div v-show="showModal" class="absolute bg-[#ffff] w-full p-2.5 rounded-b-[8px] border-1 z-10" >
-              <input class="border-1 w-full mb-3 p-2" type="text" @input="searchClient" v-model="inputClient">
-              <nav>
-                <ul class="flex flex-col gap-2.5">
-                  <li v-for="client in filterClient" @click="selectClient(client)" class="hover:text-[#6366F1] cursor-pointer w-full capitalize">{{client.name}} {{ client.lastName }}</li>
-                </ul>
-              </nav>
-            </div>
+            <CustomSelectModal v-model="inputClient" @select="(c) => selectClient(c as Clients)" v-if="showModalClients" placeholder="ex: Ricardo Santos" @change="searchClient" :items="filterClient" />
           </div>
             
-          <div class="flex gap-10 md:gap-5 items-end flex-wrap">
+          <div class="relative flex gap-10 md:gap-5 items-end flex-wrap">
             <InputField
             messageLabel="Filme"
             placeHolder="Selecione o filme"
             :isRequired=true
             typeField="text"
             name="movie"
-            :modelValue="movies.Title"
+            :modelValue="movie?.Title"
             readonly
+            @click="showModalMovies = !showModalMovies;"
             />
 
-            <router-link to="/movies" class="w-full md:w-auto">
-              <Button typeBtn="button" class="w-full md:w-auto">Escolher filme</Button>
-            </router-link>
+            <CustomSelectModal v-model="inputMovies" @select="(m) => selectMovie(m as Movie)" v-if="showModalMovies" placeholder="ex: Avengers" @change="searchMovie" :items="searchedMovies" />
 
           </div>
           

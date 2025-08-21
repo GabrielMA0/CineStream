@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia';
-import type { User } from '../types/general';
+import type { Clients} from '../types/general';
 
 export const useClientsStore = defineStore('clients', {
-    state: (): { clients: User[] } => ({
+    state: (): { clients: Clients[] } => ({
         clients: [],
     }),
     actions: {
-        createClient(userData: User): void {
+        createClient(userData: Clients): void {
             this.clients.push(userData);
         },
-        updateClient(id: string, updatedData: Partial<User>): void {
+        updateClient(id: string, updatedData: Partial<Clients>): void {
             const index = this.clients.findIndex(u => u.id === id);
             if (index !== -1) {
                 this.clients[index] = { ...this.clients[index], ...updatedData };

@@ -6,7 +6,6 @@ export type ButtonType = 'button' | 'submit' | 'reset' | undefined;
 
 export type StyleField = "filter" | "register" | "date" | undefined;
 
-
 export type User = {
     id: string;
     name: string;
@@ -16,6 +15,7 @@ export type User = {
 };
 
 export type Rental = {
+    idRental?: string;
     id: string;
     name: string;
     movie: string;
@@ -26,7 +26,7 @@ export type Rental = {
 };
 
 export type Clients = {
-    id?: string;
+    id: string;
     name: string;
     lastName: string;
     document: string;
@@ -37,15 +37,18 @@ export type Clients = {
     neighborhood: string;
     city: string;
     state: string;
-    status?: Status;
+    status: Status;
 };
 
-export type Auth = {
-    id: string;
-    name: string;
-    document: string;
-    password: string;
-    status: Status;
+export type Auth = User & {
     token: string;
 };
+
+export type Movie = {
+    Poster?: string,
+    Title?: string
+    Type?: string
+    Year?: string
+    imdbID?: string
+}
 
